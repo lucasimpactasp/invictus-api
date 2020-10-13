@@ -30,7 +30,7 @@ export class Product extends BaseEntity<Product> {
   })
   dimension: string;
 
-  @ManyToOne(
+  /* @ManyToOne(
     () => Category,
     category => category.products,
   )
@@ -40,5 +40,5 @@ export class Product extends BaseEntity<Product> {
     () => Vendor,
     vendor => vendor.products,
   )
-  vendor: Vendor;
+  vendor: Vendor; */
 }

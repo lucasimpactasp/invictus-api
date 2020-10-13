@@ -17,6 +17,6 @@ export class Vendor extends BaseEntity<Vendor> {
   })
   phone: string;
 
-  @OneToMany(() => Product, product => product.vendor)
-  products: Product[]
+/*  @OneToMany(() => Product, product => product.vendor)
+  products: Product[] */
 }

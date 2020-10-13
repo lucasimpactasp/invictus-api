@@ -14,10 +14,9 @@ export class Category extends BaseEntity<Category> {
   })
   slug: string;
 
-  @OneToMany(
+  /* @OneToMany(
     () => Product,
     product => product.category,
   )
-  products: Product[];
+  products: Product[]; */
 }
- 
