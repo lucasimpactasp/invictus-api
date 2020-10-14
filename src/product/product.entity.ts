@@ -30,6 +30,11 @@ export class Product extends BaseEntity<Product> {
   })
   dimension: string;
 
+  @Column({
+    nullable: true,
+  })
+  imageUrl: string;
+
   /* @ManyToOne(
     () => Category,
     category => category.products,
