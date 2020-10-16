@@ -11,7 +11,6 @@ import { OAuthController } from './oauth.controller';
 import { OAuthGuard } from './oauth.guard';
 import { OAuthCode } from './oauth-code.entity';
 import { OAuthCodeService } from './oauth-code.service';
-import { OAuthInterceptor } from './oauth.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
@@ -30,10 +29,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     OAuthService,
     OAuthCodeService,
     OAuthGuard.register(),
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: OAuthInterceptor,
-    },
     OAuthClientService,
     RevokedService,
   ],

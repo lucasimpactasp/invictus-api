@@ -1,3 +1,3 @@
-export const OAUTH_PUBLIC = 'WIZZER_OAUTH_PUBLIC'
-export const OAUTH_SCOPE = 'WIZZER_OAUTH_SCOPE'
-export const OAUTH_ACTIONS_SCOPE = 'WIZZER_OAUTH_ACTIONS_SCOPE'
+export const OAUTH_PUBLIC = 'oauth_public'
+export const OAUTH_SCOPE = 'oauth_scope'
+export const OAUTH_ACTIONS_SCOPE = 'oauth_actions_scope'

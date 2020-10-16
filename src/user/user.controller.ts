@@ -31,18 +31,18 @@ import { UserDto } from './user.dto';
 
 @ApiTags('Users')
 @Controller('users')
-@OAuthPublic()
-// @ApiOAuth2(['public'])
-// @OAuthActionsScope({
-//   'Create-Many': ['users.create'],
-//   'Create-One': ['users.create'],
-//   'Update-One': ['users.update'],
-//   'Delete-All': ['users.delete'],
-//   'Delete-One': ['users.delete'],
-//   'Read-All': ['users.read'],
-//   'Read-One': ['users.read', 'public'],
-//   'Replace-One': ['users.update'],
-// })
+// @OAuthPublic()
+@ApiOAuth2(['public'])
+@OAuthActionsScope({
+  'Create-Many': ['admin'],
+  'Create-One': ['admin'],
+  'Update-One': ['admin'],
+  'Delete-All': ['admin'],
+  'Delete-One': ['admin'],
+  'Read-All': ['admin'],
+  'Read-One': ['admin'],
+  'Replace-One': ['admin'],
+})
 @Crud({
   model: {
     type: User,
@@ -56,14 +56,17 @@ import { UserDto } from './user.dto';
   },
 })
 export class UserController {
-  constructor(
-    public readonly service: UserService,
-  ) {}
+  constructor(public readonly service: UserService) {}
 
   // @Override()
   @OAuthPublic()
   @Post()
   createUser(@Body(new SanitizePipe(UserDto)) dto: UserDto) {
     return this.service.createUser(dto);
+  }
+
+  @Get('me')
+  getMe(@CurrentUser() user: User) {
+    console.log(user);
   }
 }

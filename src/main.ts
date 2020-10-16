@@ -68,7 +68,8 @@ class App {
             tokenUrl: 'http://localhost:3000/oauth/token',
             refreshUrl: 'http://localhost:3000/oauth/token',
             scopes: {
-              publico: 'public',
+              admin: 'Administrador',
+              employee: 'Funcionário',
             },
           },
         },

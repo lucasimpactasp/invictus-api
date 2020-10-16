@@ -18,7 +18,15 @@ export class UserService extends CrudService<User> {
 
   async getByUsernameAndPassword(username: string, password: string) {
     const user = await this.repo.findOne({
-      select: ['id', 'email', 'username', 'password', 'firstName', 'lastName'],
+      select: [
+        'id',
+        'email',
+        'username',
+        'password',
+        'firstName',
+        'lastName',
+        'role',
+      ],
       where: [{ username }, { email: username }],
     });
 

@@ -1,7 +1,7 @@
 import { Expose } from 'class-transformer';
-import { IsString, IsEmail, IsIn } from 'class-validator';
+import { IsString, IsEmail, IsIn, IsEnum } from 'class-validator';
 import { DeepPartial } from 'typeorm';
-import { User, Gender } from './user.entity';
+import { User, Gender, Role } from './user.entity';
 
 
 export class UserDto {
@@ -36,4 +36,8 @@ export class UserDto {
   @IsString({ always: true })
   @Expose()
   birthday: string;
+
+  @IsEnum(Role)
+  @Expose()
+  role: Role
 }

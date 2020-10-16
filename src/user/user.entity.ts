@@ -14,6 +14,10 @@ import { BCryptTransformer } from '../lib/bcrypt';
 import { Exclude } from 'class-transformer';
 
 export type Gender = 'M' | 'F';
+export enum Role {
+  ADMIN = 'admin',
+  EMPLOYEE = 'employee',
+}
 
 @Entity()
 export class User extends BaseEntity<User> {
@@ -67,6 +71,11 @@ export class User extends BaseEntity<User> {
     nullable: true,
   })
   lastDateLogin: Date;
+
+  @Column({
+    enum: [Role.ADMIN, Role.EMPLOYEE],
+  })
+  role: Role;
 
   // @ManyToMany(() => User, user => user.following)
   // @JoinTable({

@@ -6,6 +6,7 @@ import { UserService } from '../user/user.service';
 import { OAuthClientService } from './oauth-client.service';
 import { RevokedService } from './revoked.service';
 import { OAuthCodeService } from './oauth-code.service';
+import { OAuthClient } from './oauth-client.entity';
 
 export interface JwtToken {
   iss?: string;
@@ -73,18 +74,6 @@ export class OAuthService
     return true;
   }
 
-  // TODO: Limitar scopos de clientes e liberar scopos sensíveis somente após análise do aplicativo.
-  // async validateScope(
-  //   user: OAuth2Server.User,
-  //   client: OAuthClient,
-  //   scope: string | string[],
-  // ) {
-
-  //   console.log('validate', scope)
-  //   return scope
-  //   // return ;
-  // }
-
   async generateRefreshToken?(
     client: OAuth2Server.Client,
     user: OAuth2Server.User,
@@ -118,11 +107,13 @@ export class OAuthService
   ): Promise<string> {
     if (typeof scope == 'string') scope = scope.split(',');
 
+    console.log('user', user);
+
     return this.jwt.sign(
       <JwtToken>{
         sub: user.id,
         aud: client.id,
-        scope,
+        scope: [user.role],
       },
       {
         expiresIn: +client.accessTokenLifetime,
@@ -169,7 +160,9 @@ export class OAuthService
     const payload = this.jwt.verify(token.accessToken);
     const tokenScope = payload.scope || ['public'];
 
-    if (typeof scope == 'string') scope = scope.split(',');
+    console.log('verify scope', tokenScope);
+
+    if (typeof scope == 'string') scope = scope.split(' ');
     if (scope.length == 0) return true;
 
     return scope.some(item => tokenScope.includes(item));
