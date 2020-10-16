@@ -1,7 +1,4 @@
-import {
-  Entity,
-  Column, OneToMany
-} from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { BaseEntity } from '../base-entity';
 import { Product } from '../product/product.entity';
 
@@ -17,6 +14,9 @@ export class Vendor extends BaseEntity<Vendor> {
   })
   phone: string;
 
-/*  @OneToMany(() => Product, product => product.vendor)
-  products: Product[] */
+  @OneToMany(
+    () => Product,
+    product => product.vendor,
+  )
+  products: Product[];
 }

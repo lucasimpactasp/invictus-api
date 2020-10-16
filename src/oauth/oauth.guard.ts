@@ -48,8 +48,6 @@ export class OAuthGuard implements CanActivate {
       ...new Set(this.getScope(controller).concat(this.getScope(handler))),
     ];
 
-    console.log('scope', scope);
-
     return this.oauthService.oauth
       .authenticate(new OAuthRequest(req), new OAuthResponse(res), { scope })
       .then(token => {
@@ -57,7 +55,6 @@ export class OAuthGuard implements CanActivate {
         return true;
       })
       .catch(err => {
-        console.log('error', err);
         return false;
       });
   }

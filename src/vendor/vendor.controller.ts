@@ -14,14 +14,14 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Vendors')
 @Controller('vendors')
 @OAuthActionsScope({
-  'Create-Many': ['users.create'],
-  'Create-One': ['users.create'],
-  'Update-One': ['users.update'],
-  'Delete-All': ['users.delete'],
-  'Delete-One': ['users.delete'],
-  'Read-All': ['users.read'],
-  'Read-One': ['users.read', 'public'],
-  'Replace-One': ['users.update'],
+  'Create-Many': ['admin'],
+  'Create-One': ['admin'],
+  'Update-One': ['admin'],
+  'Delete-All': ['admin'],
+  'Delete-One': ['admin'],
+  'Read-All': ['admin'],
+  'Read-One': ['admin'],
+  'Replace-One': ['admin'],
 })
 @Crud({
   model: {

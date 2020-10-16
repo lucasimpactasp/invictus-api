@@ -58,7 +58,6 @@ import { UserDto } from './user.dto';
 export class UserController {
   constructor(public readonly service: UserService) {}
 
-  // @Override()
   @OAuthPublic()
   @Post()
   createUser(@Body(new SanitizePipe(UserDto)) dto: UserDto) {

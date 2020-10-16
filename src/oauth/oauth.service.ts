@@ -107,8 +107,6 @@ export class OAuthService
   ): Promise<string> {
     if (typeof scope == 'string') scope = scope.split(',');
 
-    console.log('user', user);
-
     return this.jwt.sign(
       <JwtToken>{
         sub: user.id,
@@ -159,8 +157,6 @@ export class OAuthService
   ): Promise<boolean> {
     const payload = this.jwt.verify(token.accessToken);
     const tokenScope = payload.scope || ['public'];
-
-    console.log('verify scope', tokenScope);
 
     if (typeof scope == 'string') scope = scope.split(' ');
     if (scope.length == 0) return true;
