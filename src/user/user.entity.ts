@@ -12,11 +12,15 @@ import {
 import { BaseEntity } from '../base-entity';
 import { BCryptTransformer } from '../lib/bcrypt';
 import { Exclude } from 'class-transformer';
+import { Product } from 'src/product/product.entity';
+import { Invoice } from 'src/invoice/invoice.entity';
+import { InvoiceService } from 'src/invoice/invoice.service';
 
 export type Gender = 'M' | 'F';
 export enum Role {
   ADMIN = 'admin',
   EMPLOYEE = 'employee',
+  DEFAULT = 'default',
 }
 
 @Entity()
@@ -73,28 +77,25 @@ export class User extends BaseEntity<User> {
   lastDateLogin: Date;
 
   @Column({
-    enum: [Role.ADMIN, Role.EMPLOYEE],
+    enum: [Role.ADMIN, Role.EMPLOYEE, Role.DEFAULT],
   })
   role: Role;
 
-  // @ManyToMany(() => User, user => user.following)
-  // @JoinTable({
-  //   name: 'user_followers',
-  //   joinColumn: {
-  //     name: 'user_id',
-  //   },
-  //   inverseJoinColumn: {
-  //     name: 'follower_id',
-  //   },
-  // })
-  // followers: User[];
+  @OneToMany(
+    () => Product,
+    product => product.createdBy,
+  )
+  products: Product[];
 
-  // @ManyToMany(() => User, user => user.followers)
-  // following: User[];
+  @ManyToMany(
+    () => Invoice,
+    invoice => invoice.sellers,
+  )
+  madeInvoices: Invoice[];
 
-  // @RelationCount('followers')
-  // followersCount: number;
-
-  // @RelationCount('following')
-  // followingCount: number;
+  @ManyToMany(
+    () => Invoice,
+    invoice => invoice.buyers,
+  )
+  purchasedInvoices: Invoice[];
 }

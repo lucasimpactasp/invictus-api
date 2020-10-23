@@ -14,6 +14,11 @@ export class Vendor extends BaseEntity<Vendor> {
   })
   phone: string;
 
+  @Column({
+    nullable: true,
+  })
+  email: string;
+
   @OneToMany(
     () => Product,
     product => product.vendor,

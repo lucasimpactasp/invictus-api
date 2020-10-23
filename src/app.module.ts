@@ -10,6 +10,8 @@ import { UserModule } from './user/user.module';
 import { VendorModule } from './vendor/vendor.module';
 import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
+import { InvoiceModule } from './invoice/invoice.module';
+import { InstallmentModule } from './installment/installment.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { CategoryModule } from './category/category.module';
     UserModule,
     ProductModule,
     CategoryModule,
+    InvoiceModule,
+    InstallmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
