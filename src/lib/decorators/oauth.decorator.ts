@@ -1,5 +1,5 @@
 import { OAUTH_PUBLIC, OAUTH_SCOPE, OAUTH_ACTIONS_SCOPE } from '../meta';
-import { SetMetadata, createParamDecorator } from '@nestjs/common';
+import { SetMetadata, createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { BaseRouteName, CrudActions } from '@nestjsx/crud';
 import { ApiOAuth2 } from '@nestjs/swagger';
 
@@ -52,4 +52,6 @@ export const OAuthActionsScope = (
   };
 };
 
-export const CurrentUser = createParamDecorator((data, req) => req.user);
+export const CurrentUser = createParamDecorator(
+  (_data, ctx: ExecutionContext) => ctx.switchToHttp().getRequest().user,
+);

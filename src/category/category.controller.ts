@@ -1,6 +1,6 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
-import { Crud } from '@nestjsx/crud';
+import { Crud, CrudRequest, GetManyDefaultResponse, ParsedRequest } from '@nestjsx/crud';
 import { OAuthActionsScope } from 'src/lib/decorators/oauth.decorator';
 import { Category } from './category.entity';
 import { CategoryService } from './category.service';
@@ -21,6 +21,13 @@ import { CategoryService } from './category.service';
 @Crud({
   model: {
     type: Category,
+  },
+  query: {
+    join: {
+      products: {
+        exclude: ['id'],
+      },
+    },
   },
   params: {
     id: {
