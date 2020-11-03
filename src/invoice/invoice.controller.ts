@@ -21,13 +21,20 @@ import { InvoiceService } from './invoice.service';
   model: {
     type: Invoice,
   },
+  query: {
+    join: {
+      installments: {
+        allow: ['paymentMethod', 'price', 'title', 'paymentDate'],
+      },
+    },
+  },
   params: {
     id: {
       type: 'string',
       field: 'id',
       primary: true,
-    }
-  }
+    },
+  },
 })
 export class InvoiceController {
   constructor(public readonly service: InvoiceService) {}

@@ -2,7 +2,7 @@ import { Category } from 'src/category/category.entity';
 import { Invoice } from 'src/invoice/invoice.entity';
 import { User } from 'src/user/user.entity';
 import { Vendor } from 'src/vendor/vendor.entity';
-import { Entity, Column, OneToMany, ManyToOne, ManyToMany } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
 import { BaseEntity } from '../base-entity';
 
 @Entity()
