@@ -78,6 +78,7 @@ export class User extends BaseEntity<User> {
 
   @Column({
     enum: [Role.ADMIN, Role.EMPLOYEE, Role.DEFAULT],
+    default: Role.ADMIN,
   })
   role: Role;
 
