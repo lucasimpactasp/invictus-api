@@ -1,7 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Crud } from '@nestjsx/crud';
-import { OAuthActionsScope } from 'src/lib/decorators/oauth.decorator';
+import { Crud, Override } from '@nestjsx/crud';
+import {
+  CurrentUser,
+  OAuthActionsScope,
+} from 'src/lib/decorators/oauth.decorator';
+import { User } from 'src/user/user.entity';
 import { Invoice } from './invoice.entity';
 import { InvoiceService } from './invoice.service';
 
@@ -24,8 +34,14 @@ import { InvoiceService } from './invoice.service';
   query: {
     join: {
       installments: {
-        allow: ['paymentMethod', 'price', 'title', 'paymentDate'],
+        exclude: [],
       },
+      sellers: {
+        exclude: []
+      },
+      buyers: {
+        exclude: []
+      }
     },
   },
   params: {
@@ -38,4 +54,17 @@ import { InvoiceService } from './invoice.service';
 })
 export class InvoiceController {
   constructor(public readonly service: InvoiceService) {}
+
+  @Post('')
+  async createOne(@Body() body: Invoice, @CurrentUser() user: User) {
+    const totalInstallments: number = body.installments.reduce(
+      (acc, value) => acc + value.price,
+      0,
+    );
+
+    body.total = totalInstallments;
+    body.sellers = [{ id: user.id } as User];
+    
+    return await this.service.createOneInvoice(body);
+  }
 }

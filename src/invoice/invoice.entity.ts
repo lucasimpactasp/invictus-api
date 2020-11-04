@@ -20,6 +20,9 @@ export class Invoice extends BaseEntity<Invoice> {
   @OneToMany(
     () => Installment,
     installment => installment.invoice,
+    {
+      cascade: true,
+    },
   )
   installments: Installment[];
 
@@ -27,6 +30,9 @@ export class Invoice extends BaseEntity<Invoice> {
   @ManyToMany(
     () => User,
     user => user.madeInvoices,
+    {
+      cascade: true,
+    },
   )
   sellers: User[];
 
@@ -34,6 +40,9 @@ export class Invoice extends BaseEntity<Invoice> {
   @ManyToMany(
     () => User,
     user => user.purchasedInvoices,
+    {
+      cascade: true,
+    },
   )
   buyers: User[];
 
@@ -41,6 +50,9 @@ export class Invoice extends BaseEntity<Invoice> {
   @ManyToMany(
     () => Product,
     product => product.invoices,
+    {
+      cascade: true,
+    },
   )
   products: Product[];
 }

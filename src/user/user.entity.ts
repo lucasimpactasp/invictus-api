@@ -25,13 +25,6 @@ export enum Role {
 
 @Entity()
 export class User extends BaseEntity<User> {
-  static joinAs(name: string = 'user') {
-    const obj = {};
-    obj[name] = { allow: ['id', 'firstName', 'lastName', 'email', 'username'] };
-    obj[name + '.avatar'] = { allow: ['id', 'storageUrl'] };
-    return obj;
-  }
-
   @Column({
     nullable: false,
   })
@@ -78,7 +71,7 @@ export class User extends BaseEntity<User> {
 
   @Column({
     enum: [Role.ADMIN, Role.EMPLOYEE, Role.DEFAULT],
-    default: Role.ADMIN,
+    default: Role.DEFAULT,
   })
   role: Role;
 

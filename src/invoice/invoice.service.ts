@@ -9,4 +9,8 @@ export class InvoiceService extends CrudService<Invoice> {
   constructor(@InjectRepository(Invoice) repo: Repository<Invoice>) {
     super(repo);
   }
+
+  public async createOneInvoice(invoice: Invoice): Promise<Invoice> {
+    return await this.repo.save(invoice);
+  }
 }

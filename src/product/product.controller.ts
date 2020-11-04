@@ -1,10 +1,14 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Crud } from '@nestjsx/crud';
 import {
+  CurrentUser,
   OAuthActionsScope,
   OAuthPublic,
 } from 'src/lib/decorators/oauth.decorator';
+import { SanitizePipe } from 'src/lib/pipes/sanitize.pipe';
+import { User } from 'src/user/user.entity';
+import { ProductDto } from './product.dto';
 import { Product } from './product.entity';
 import { ProductService } from './product.service';
 
@@ -31,7 +35,7 @@ import { ProductService } from './product.service';
       },
       category: {
         allow: ['id', 'name', 'slug'],
-      }
+      },
     },
   },
   params: {
@@ -44,4 +48,12 @@ import { ProductService } from './product.service';
 })
 export class ProductController {
   constructor(public readonly service: ProductService) {}
+
+  @Post('')
+  async createOne(@Body(new SanitizePipe(ProductDto)) dto: ProductDto, @CurrentUser() user: User) {
+    dto.originalPrice = dto.price;
+    
+
+    return await this.service.createOneProduct(dto, user);
+  }
 }
