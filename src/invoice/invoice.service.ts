@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { throws } from 'assert';
 import { CrudService } from 'src/lib/crud-services/crud-services';
 import { Repository } from 'typeorm';
 import { Invoice } from './invoice.entity';

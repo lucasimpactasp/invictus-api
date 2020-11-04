@@ -1,8 +1,8 @@
-import { Controller } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { BadRequestException, Body, Controller, Param, Put } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Crud } from '@nestjsx/crud';
 import { OAuthActionsScope } from 'src/lib/decorators/oauth.decorator';
-import { Installment } from './installment.entity';
+import { Installment, PaymentStatus } from './installment.entity';
 import { InstallmentService } from './installment.service';
 
 @ApiTags('Installment')
@@ -31,4 +31,14 @@ import { InstallmentService } from './installment.service';
 })
 export class InstallmentController {
   constructor(public readonly service: InstallmentService) {}
+
+  @Put('/pay/:id')
+  @ApiOperation({ summary: 'Paga uma parcela' })
+  async payInstallment(@Param('id') id: string, @Body() installment: Installment) {
+    if (installment.paymentStatus === PaymentStatus.PAID) {
+      throw new BadRequestException('Installment já paga');
+    }
+
+    return this.service.payInstallment(id, installment);
+  }
 }

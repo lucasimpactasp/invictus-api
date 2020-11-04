@@ -12,11 +12,13 @@ import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { InstallmentModule } from './installment/installment.module';
+import { ScheduleModule } from "@nestjs/schedule";
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(),
+    ScheduleModule.forRoot(),
     VendorModule,
     OAuthModule,
     UserModule,

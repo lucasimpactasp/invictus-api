@@ -3,9 +3,11 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
+  Put,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Crud, Override } from '@nestjsx/crud';
 import {
   CurrentUser,
@@ -37,11 +39,11 @@ import { InvoiceService } from './invoice.service';
         exclude: [],
       },
       sellers: {
-        exclude: []
+        exclude: [],
       },
       buyers: {
-        exclude: []
-      }
+        exclude: [],
+      },
     },
   },
   params: {
@@ -64,7 +66,7 @@ export class InvoiceController {
 
     body.total = totalInstallments;
     body.sellers = [{ id: user.id } as User];
-    
+
     return await this.service.createOneInvoice(body);
   }
 }

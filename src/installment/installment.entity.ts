@@ -7,6 +7,13 @@ export enum PaymentMethod {
   CARTAO_DE_CREDITO = 'CARTAO_DE_CREDITO',
 }
 
+export enum PaymentStatus {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  EXPIRED = 'EXPIRED',
+  ERROR = 'ERROR',
+}
+
 @Entity()
 export class Installment extends BaseEntity<Installment> {
   @Column({
@@ -29,6 +36,18 @@ export class Installment extends BaseEntity<Installment> {
     nullable: true,
   })
   paymentDate: Date;
+
+  @Column({
+    nullable: false,
+    enum: [
+      PaymentStatus.PENDING,
+      PaymentStatus.PAID,
+      PaymentStatus.EXPIRED,
+      PaymentStatus.ERROR,
+    ],
+    default: PaymentStatus.PENDING,
+  })
+  paymentStatus: PaymentStatus;
 
   @ManyToOne(
     () => Invoice,
