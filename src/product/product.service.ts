@@ -47,7 +47,9 @@ export class ProductService extends CrudService<Product> {
 
     delete newProduct.category;
     delete newProduct.vendor;
-    
+
+    newProduct.category = { id: product.category };
+
     await this.repo.update(id, (newProduct as unknown) as Product);
     return newProduct;
   }
