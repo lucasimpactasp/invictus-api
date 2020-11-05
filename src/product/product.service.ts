@@ -21,7 +21,7 @@ export class ProductService extends CrudService<Product> {
     };
 
     delete newProduct.category;
-    delete newProduct.vendor; 
+    delete newProduct.vendor;
 
     newProduct.createdBy = { id: user.id };
 
@@ -34,5 +34,21 @@ export class ProductService extends CrudService<Product> {
     }
 
     return await this.repo.save((newProduct as unknown) as Product);
+  }
+
+  public async putOneProduct(
+    id: string,
+    product: Product,
+    user: User,
+  ): Promise<Product> {
+    const newProduct: any = {
+      ...product,
+    };
+
+    delete newProduct.category;
+    delete newProduct.vendor;
+    
+    await this.repo.update(id, (newProduct as unknown) as Product);
+    return newProduct;
   }
 }

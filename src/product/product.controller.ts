@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Crud } from '@nestjsx/crud';
 import {
@@ -50,10 +50,21 @@ export class ProductController {
   constructor(public readonly service: ProductService) {}
 
   @Post('')
-  async createOne(@Body(new SanitizePipe(ProductDto)) dto: ProductDto, @CurrentUser() user: User) {
+  async createOne(
+    @Body(new SanitizePipe(ProductDto)) dto: ProductDto,
+    @CurrentUser() user: User,
+  ) {
     dto.originalPrice = dto.price;
-    
 
     return await this.service.createOneProduct(dto, user);
+  }
+
+  @Put(':id')
+  async putOne(
+    @Param('id') id: string,
+    @Body() product: Product,
+    @CurrentUser() user: User,
+  ) {
+    return await this.service.putOneProduct(id, product, user);
   }
 }
