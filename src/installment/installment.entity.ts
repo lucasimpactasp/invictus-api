@@ -38,7 +38,7 @@ export class Installment extends BaseEntity<Installment> {
   paymentDate: Date;
 
   @Column({
-    nullable: false,
+    nullable: true,
     enum: [
       PaymentStatus.PENDING,
       PaymentStatus.PAID,
