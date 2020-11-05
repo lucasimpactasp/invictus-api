@@ -38,6 +38,7 @@ export class InstallmentService extends CrudService<Installment> {
     const installments: Installment[] = await this.repo.find({
       where: {
         paymentStatus: PaymentStatus.PENDING,
+        paymentMethod: PaymentMethod.BOLETO || PaymentMethod.CARTAO_DE_CREDITO,
       },
     });
 
