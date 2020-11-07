@@ -1,15 +1,11 @@
-import {
-  Controller,
-} from '@nestjs/common';
+import { Body, Controller, Param, Post, Put } from '@nestjs/common';
 import { VendorService } from './vendor.service';
 import { Vendor } from './vendor.entity';
-import {
-  Crud,
-} from '@nestjsx/crud';
-import {
-  OAuthActionsScope,
-} from '../lib/decorators/oauth.decorator';
+import { Crud } from '@nestjsx/crud';
+import { OAuthActionsScope } from '../lib/decorators/oauth.decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { Category } from '../category/category.entity';
+import { Product } from '../product/product.entity';
 
 @ApiTags('Vendors')
 @Controller('vendors')
@@ -27,6 +23,13 @@ import { ApiTags } from '@nestjs/swagger';
   model: {
     type: Vendor,
   },
+  query: {
+    join: {
+      products: {
+        exclude: [],
+      },
+    },
+  },
   params: {
     id: {
       type: 'string',
@@ -38,6 +41,25 @@ import { ApiTags } from '@nestjs/swagger';
 export class VendorController {
   constructor(
     public readonly service: VendorService,
-  ) {}
+  ) {
+  }
+
+
+  @Post('')
+  public async createCategory(@Body() body: Vendor): Promise<Category> {
+    body.products = body.products.map((product) => {
+      return { id: product as unknown as string } as Product;
+    });
+
+    return this.service.createVendor(body);
+  }
+
+  @Put(':id')
+  async putOne(
+    @Param('id') id: string,
+    @Body() vendor: Vendor,
+  ) {
+    return await this.service.updateVendor(id, vendor);
+  }
 
 }

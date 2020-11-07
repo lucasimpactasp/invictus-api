@@ -2,36 +2,25 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-  Patch,
-  Delete,
-  Param,
-  UseInterceptors,
-  Scope,
+  Body, Put, Param,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
 import {
   Crud,
-  CrudRequestInterceptor,
-  ParsedRequest,
-  CrudRequest,
-  Action,
-  Override,
 } from '@nestjsx/crud';
 import {
   OAuthPublic,
   OAuthActionsScope,
   CurrentUser,
-  OAuthScope,
 } from '../lib/decorators/oauth.decorator';
 import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
 import { SanitizePipe } from '../lib/pipes/sanitize.pipe';
 import { UserDto } from './user.dto';
+import { Product } from '../product/product.entity';
 
 @ApiTags('Users')
 @Controller('users')
-// @OAuthPublic()
 @ApiOAuth2(['public'])
 @OAuthActionsScope({
   'Create-Many': ['admin'],
@@ -47,6 +36,13 @@ import { UserDto } from './user.dto';
   model: {
     type: User,
   },
+  query: {
+    join: {
+      madeInvoices: {
+        exclude: [],
+      },
+    },
+  },
   params: {
     id: {
       type: 'string',
@@ -56,7 +52,8 @@ import { UserDto } from './user.dto';
   },
 })
 export class UserController {
-  constructor(public readonly service: UserService) {}
+  constructor(public readonly service: UserService) {
+  }
 
   @OAuthPublic()
   @Post()
@@ -68,4 +65,18 @@ export class UserController {
   getMe(@CurrentUser() user: User) {
     return user;
   }
+
+  @Get('bestSeller')
+  public async getBestSeller() {
+    return this.service.getBestSeller();
+  }
+
+  @Put(':id')
+  async putOne(
+    @Param('id') id: string,
+    @Body() user: User,
+  ) {
+    return await this.service.updateUser(id, user);
+  }
+
 }

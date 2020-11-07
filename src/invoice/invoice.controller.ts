@@ -1,21 +1,11 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Crud, Override } from '@nestjsx/crud';
-import {
-  CurrentUser,
-  OAuthActionsScope,
-} from 'src/lib/decorators/oauth.decorator';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Crud } from '@nestjsx/crud';
+import { CurrentUser, OAuthActionsScope } from 'src/lib/decorators/oauth.decorator';
 import { User } from 'src/user/user.entity';
 import { Invoice } from './invoice.entity';
 import { InvoiceService } from './invoice.service';
+import { Product } from '../product/product.entity';
 
 @ApiTags('Invoice')
 @Controller('invoice')
@@ -55,18 +45,33 @@ import { InvoiceService } from './invoice.service';
   },
 })
 export class InvoiceController {
-  constructor(public readonly service: InvoiceService) {}
+  constructor(public readonly service: InvoiceService) {
+  }
 
   @Post('')
   async createOne(@Body() body: Invoice, @CurrentUser() user: User) {
-    const totalInstallments: number = body.installments.reduce(
+    body.total = body.installments.reduce(
       (acc, value) => acc + value.price,
       0,
     );
-
-    body.total = totalInstallments;
     body.sellers = [{ id: user.id } as User];
 
+    body.products = body.products.map((product) => {
+      return { id: product as unknown as string } as Product;
+    });
+
+    body.installments.forEach((installment) => {
+      delete installment.invoice;
+      delete installment.paymentMethod;
+      delete installment.paymentStatus;
+      delete installment.paymentDate;
+    });
+
     return await this.service.createOneInvoice(body);
+  }
+
+  @Post('search')
+  public async searchBetweenDates(@Body() body: { from: Date, until: Date }) {
+    return await this.service.search(body);
   }
 }

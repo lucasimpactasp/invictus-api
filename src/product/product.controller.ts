@@ -31,10 +31,10 @@ import { ProductService } from './product.service';
   query: {
     join: {
       vendor: {
-        allow: ['id', 'name', 'phone'],
+        exclude: [],
       },
       category: {
-        allow: ['id', 'name', 'slug'],
+        exclude: [],
       },
     },
   },
@@ -63,8 +63,12 @@ export class ProductController {
   async putOne(
     @Param('id') id: string,
     @Body() product: Product,
-    @CurrentUser() user: User,
   ) {
-    return await this.service.putOneProduct(id, product, user);
+    return await this.service.putOneProduct(id, product);
+  }
+
+  @Post('search')
+  public async searchProduct(@Body() body: {term: string}): Promise<Product[]> {
+    return await this.service.searchProduct(body);
   }
 }

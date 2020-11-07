@@ -34,8 +34,15 @@ export class Installment extends BaseEntity<Installment> {
 
   @Column({
     nullable: true,
+    type: "date"
   })
   paymentDate: Date;
+
+  @Column({
+    nullable: true,
+    type: "date"
+  })
+  expirationDate: Date;
 
   @Column({
     nullable: true,

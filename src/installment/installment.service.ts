@@ -2,12 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CrudService } from 'src/lib/crud-services/crud-services';
-import { Repository } from 'typeorm';
-import {
-  Installment,
-  PaymentMethod,
-  PaymentStatus,
-} from './installment.entity';
+import { Between, IsNull, Raw, Repository } from 'typeorm';
+import { Installment, PaymentMethod, PaymentStatus } from './installment.entity';
 
 @Injectable()
 export class InstallmentService extends CrudService<Installment> {
@@ -36,19 +32,14 @@ export class InstallmentService extends CrudService<Installment> {
   @Cron('0 */5 * * * *')
   async updateInstallment() {
     const installments: Installment[] = await this.repo.find({
-      where: {
-        paymentStatus: PaymentStatus.PENDING,
-        paymentMethod: PaymentMethod.BOLETO || PaymentMethod.CARTAO_DE_CREDITO,
-      },
+      expirationDate: Raw(alias => `${alias} < NOW()`),
     });
 
     installments.map(installment => {
-      if (installment.paymentDate < new Date()) {
-        this.repo.update(installment.id, {
-          ...installment,
-          paymentStatus: PaymentStatus.EXPIRED,
-        });
-      }
+      this.repo.update(installment.id, {
+        ...installment,
+        paymentStatus: PaymentStatus.EXPIRED,
+      });
     });
   }
 }

@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { User } from './user.entity';
-import { Repository } from 'typeorm';
+import { Role, User } from './user.entity';
+import { Equal, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as BCrypt from 'bcrypt';
 import { classToPlain } from 'class-transformer';
 import { CrudService } from '../lib/crud-services/crud-services';
 import { UserDto } from './user.dto';
+import { Product } from '../product/product.entity';
+import { Invoice } from '../invoice/invoice.entity';
 
 @Injectable()
 export class UserService extends CrudService<User> {
   constructor(
     @InjectRepository(User)
-    repo: Repository<User>,
+      repo: Repository<User>,
   ) {
     super(repo);
   }
@@ -35,74 +37,54 @@ export class UserService extends CrudService<User> {
       : null;
   }
 
-  async isFollowing(currentUser: User, user: string): Promise<boolean> {
-    const builder = this.repo.createQueryBuilder();
-
-    return (
-      (await builder
-        .select('id')
-        .from('user_followers', 'uf')
-        .where('uf.user_id = :user AND uf.follower_id = :follower', {
-          user: user,
-          follower: currentUser.id,
-        })
-        .getCount()) > 0
-    );
-  }
-
   async createUser(dto: UserDto) {
-    const user = await this.repo.save(dto);
-
-    return user;
+    return await this.repo.save(dto);
   }
 
-  async follow(currentUser: User, user: string): Promise<any> {
-    if (currentUser.id == user) {
-      this.throwBadRequestException('Você não pode seguir a sí mesmo!');
-    }
+  public async getBestSeller(): Promise<User[]> {
+    // TODO: Fix this query
 
-    const builder = this.repo.createQueryBuilder();
-
-    await builder
-      .relation('followers')
-      .of(user)
-      .add(currentUser.id);
-
-    return this.countFollowers(user);
-  }
-
-  public countFollowers(user: string) {
-    const builder = this.repo.createQueryBuilder();
-
-    return builder
-      .select('id')
-      .from('user_followers', 'uf')
-      .where('uf.user_id = :user', {
-        user: user,
-      })
-      .getCount();
-  }
-
-  async unfollow(currentUser: User, user: string): Promise<any> {
-    if (currentUser.id == user) {
-      this.throwBadRequestException('Você não pode seguir a sí mesmo!');
-    }
-
-    const builder = this.repo.createQueryBuilder();
-
-    await builder
-      .relation('followers')
-      .of(user)
-      .remove(currentUser.id);
-
-    return this.countFollowers(user);
-  }
-
-  async setAvatar(avatar: File, user: User) {
-    await this.repo.save({
-      id: user.id,
-      avatar: avatar,
+    const users = await this.repo.find({
+      relations: ['madeInvoices'],
     });
-    return avatar;
+
+    const bestSellerInd = {
+      value: 0,
+      user: null,
+    };
+
+    users.forEach((user, index) => {
+      if (user.madeInvoices.length > bestSellerInd.value) {
+        bestSellerInd.value = user.madeInvoices.length;
+        bestSellerInd.user = user;
+      }
+    });
+
+    return bestSellerInd.user;
+  }
+
+  public async updateUser(id: string, user: User): Promise<User> {
+    const newUser: User = {
+      ...user,
+    };
+
+    delete newUser.madeInvoices;
+    delete newUser.purchasedInvoices;
+    delete newUser.products;
+    delete newUser.id;
+
+    if (newUser.madeInvoices) {
+      if (newUser.madeInvoices.length === 0) {
+        newUser.madeInvoices = null;
+      } else {
+        newUser.madeInvoices = user.madeInvoices.map((invoice) => {
+          return { id: invoice as unknown as string } as Invoice;
+        });
+      }
+    }
+
+
+    await this.repo.save({ ...newUser, id });
+    return newUser;
   }
 }

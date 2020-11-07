@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CrudService } from 'src/lib/crud-services/crud-services';
 import { User } from 'src/user/user.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { ProductDto } from './product.dto';
 import { Product } from './product.entity';
 
@@ -39,7 +39,6 @@ export class ProductService extends CrudService<Product> {
   public async putOneProduct(
     id: string,
     product: Product,
-    user: User,
   ): Promise<Product> {
     const newProduct: any = {
       ...product,
@@ -48,9 +47,17 @@ export class ProductService extends CrudService<Product> {
     delete newProduct.category;
     delete newProduct.vendor;
 
-    newProduct.category = { id: product.category };
+    if (product.category) {
+      newProduct.category = { id: product.category };
+    }
 
     await this.repo.update(id, (newProduct as unknown) as Product);
     return newProduct;
+  }
+
+  public async searchProduct(body: {term: string}): Promise<Product[]> {
+    return await this.repo.find({
+      name: Like(`%${body.term}%`)
+    })
   }
 }

@@ -32,10 +32,6 @@ export class UserDto {
   @IsString({ always: true })
   @Expose()
   password: string;
-  
-  @IsString({ always: true })
-  @Expose()
-  birthday: string;
 
   @IsEnum(Role)
   @Expose()

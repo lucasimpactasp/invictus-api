@@ -2,19 +2,13 @@ import {
   Entity,
   Column,
   OneToMany,
-  OneToOne,
   ManyToMany,
-  JoinTable,
-  RelationCount,
-  ManyToOne,
-  JoinColumn,
 } from 'typeorm';
 import { BaseEntity } from '../base-entity';
 import { BCryptTransformer } from '../lib/bcrypt';
 import { Exclude } from 'class-transformer';
 import { Product } from 'src/product/product.entity';
 import { Invoice } from 'src/invoice/invoice.entity';
-import { InvoiceService } from 'src/invoice/invoice.service';
 
 export type Gender = 'M' | 'F';
 export enum Role {
@@ -58,16 +52,6 @@ export class User extends BaseEntity<User> {
     transformer: new BCryptTransformer(),
   })
   password: string;
-
-  @Column({
-    type: 'date',
-  })
-  birthday: Date;
-
-  @Column({
-    nullable: true,
-  })
-  lastDateLogin: Date;
 
   @Column({
     enum: [Role.ADMIN, Role.EMPLOYEE, Role.DEFAULT],

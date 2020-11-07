@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+ import { Entity, Column, OneToMany } from 'typeorm';
 import { BaseEntity } from '../base-entity';
 import { Product } from '../product/product.entity';
 
@@ -25,3 +25,4 @@ export class Vendor extends BaseEntity<Vendor> {
   )
   products: Product[];
 }
+
