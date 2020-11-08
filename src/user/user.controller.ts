@@ -79,4 +79,9 @@ export class UserController {
     return await this.service.updateUser(id, user);
   }
 
+  @Post('search')
+  public async searchUsers(@Body() body: { username: string }): Promise<User[]> {
+    return await this.service.searchUsers(body);
+  }
+
 }

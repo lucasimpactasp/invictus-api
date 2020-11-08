@@ -2,7 +2,7 @@ import { BaseEntity } from 'src/base-entity';
 import { Installment } from 'src/installment/installment.entity';
 import { Product } from 'src/product/product.entity';
 import { User } from 'src/user/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Invoice extends BaseEntity<Invoice> {
@@ -17,6 +17,11 @@ export class Invoice extends BaseEntity<Invoice> {
   })
   discount: number;
 
+  @Column({
+    nullable: false,
+  })
+  title: string;
+
   @OneToMany(
     () => Installment,
     installment => installment.invoice,
@@ -26,25 +31,23 @@ export class Invoice extends BaseEntity<Invoice> {
   )
   installments: Installment[];
 
-  @JoinTable()
-  @ManyToMany(
+  @ManyToOne(
     () => User,
     user => user.madeInvoices,
     {
       cascade: true,
     },
   )
-  sellers: User[];
+  seller: User;
 
-  @JoinTable()
-  @ManyToMany(
+  @ManyToOne(
     () => User,
     user => user.purchasedInvoices,
     {
       cascade: true,
     },
   )
-  buyers: User[];
+  buyer: User;
 
   @JoinTable()
   @ManyToMany(

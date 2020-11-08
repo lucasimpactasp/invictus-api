@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Crud } from '@nestjsx/crud';
 import { CurrentUser, OAuthActionsScope } from 'src/lib/decorators/oauth.decorator';
@@ -6,6 +6,7 @@ import { User } from 'src/user/user.entity';
 import { Invoice } from './invoice.entity';
 import { InvoiceService } from './invoice.service';
 import { Product } from '../product/product.entity';
+import { Category } from '../category/category.entity';
 
 @ApiTags('Invoice')
 @Controller('invoice')
@@ -34,6 +35,9 @@ import { Product } from '../product/product.entity';
       buyers: {
         exclude: [],
       },
+      products: {
+        exclude: [],
+      },
     },
   },
   params: {
@@ -54,7 +58,7 @@ export class InvoiceController {
       (acc, value) => acc + value.price,
       0,
     );
-    body.sellers = [{ id: user.id } as User];
+    body.seller = { id: user.id } as User;
 
     body.products = body.products.map((product) => {
       return { id: product as unknown as string } as Product;
@@ -70,8 +74,26 @@ export class InvoiceController {
     return await this.service.createOneInvoice(body);
   }
 
-  @Post('search')
+  @Put(':id')
+  async putOne(
+    @Param('id') id: string,
+    @Body() invoice: Invoice,
+  ): Promise<Invoice> {
+    return await this.service.updateInvoice(id, invoice);
+  }
+
+  @Get(':id')
+  public async getInvoice(@Param('id') id: string): Promise<Invoice> {
+    return await this.service.getInvoice(id);
+  }
+
+  @Post('searchDates')
   public async searchBetweenDates(@Body() body: { from: Date, until: Date }) {
     return await this.service.search(body);
+  }
+
+  @Post('search')
+  public async searchUsers(@Body() body: { title: string }): Promise<Invoice[]> {
+    return await this.service.searchInvoices(body);
   }
 }

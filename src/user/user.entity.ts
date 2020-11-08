@@ -2,7 +2,7 @@ import {
   Entity,
   Column,
   OneToMany,
-  ManyToMany,
+  ManyToMany, ManyToOne,
 } from 'typeorm';
 import { BaseEntity } from '../base-entity';
 import { BCryptTransformer } from '../lib/bcrypt';
@@ -65,15 +65,15 @@ export class User extends BaseEntity<User> {
   )
   products: Product[];
 
-  @ManyToMany(
+  @OneToMany(
     () => Invoice,
-    invoice => invoice.sellers,
+    invoice => invoice.seller,
   )
   madeInvoices: Invoice[];
 
-  @ManyToMany(
+  @OneToMany(
     () => Invoice,
-    invoice => invoice.buyers,
+    invoice => invoice.buyer,
   )
   purchasedInvoices: Invoice[];
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Role, User } from './user.entity';
-import { Equal, Repository } from 'typeorm';
+import { Equal, Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as BCrypt from 'bcrypt';
 import { classToPlain } from 'class-transformer';
@@ -41,7 +41,7 @@ export class UserService extends CrudService<User> {
     return await this.repo.save(dto);
   }
 
-  public async getBestSeller(): Promise<User[]> {
+  public async getBestSeller(): Promise<User> {
     // TODO: Fix this query
 
     const users = await this.repo.find({
@@ -54,9 +54,11 @@ export class UserService extends CrudService<User> {
     };
 
     users.forEach((user, index) => {
-      if (user.madeInvoices.length > bestSellerInd.value) {
-        bestSellerInd.value = user.madeInvoices.length;
-        bestSellerInd.user = user;
+      if (user.madeInvoices) {
+        if (user.madeInvoices.length > bestSellerInd.value) {
+          bestSellerInd.value = user.madeInvoices.length;
+          bestSellerInd.user = user;
+        }
       }
     });
 
@@ -86,5 +88,11 @@ export class UserService extends CrudService<User> {
 
     await this.repo.save({ ...newUser, id });
     return newUser;
+  }
+
+  public async searchUsers(body: { username: string }): Promise<User[]> {
+    return await this.repo.find({
+      username: Like(`%${body.username}%`),
+    });
   }
 }
