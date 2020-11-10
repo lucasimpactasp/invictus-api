@@ -49,7 +49,7 @@ export class InvoiceService extends CrudService<Invoice> {
 
     console.log(newInvoice);
 
-    // await this.repo.save({ ...newInvoice, id });
+    await this.repo.save({ ...newInvoice, id });
     return newInvoice;
   }
 
