@@ -13,7 +13,7 @@ import { Invoice } from '../invoice/invoice.entity';
 export class UserService extends CrudService<User> {
   constructor(
     @InjectRepository(User)
-      repo: Repository<User>,
+    repo: Repository<User>,
   ) {
     super(repo);
   }
@@ -79,20 +79,20 @@ export class UserService extends CrudService<User> {
       if (newUser.madeInvoices.length === 0) {
         newUser.madeInvoices = null;
       } else {
-        newUser.madeInvoices = user.madeInvoices.map((invoice) => {
-          return { id: invoice as unknown as string } as Invoice;
+        newUser.madeInvoices = user.madeInvoices.map(invoice => {
+          return { id: (invoice as unknown) as string } as Invoice;
         });
       }
     }
-
 
     await this.repo.save({ ...newUser, id });
     return newUser;
   }
 
   public async searchUsers(body: { username: string }): Promise<User[]> {
-    return await this.repo.find({
-      username: Like(`%${body.username}%`),
-    });
+    return await this.repo
+      .createQueryBuilder('user')
+      .where('user.username LIKE :username', { username: `%${body.username}%`})
+      .loadAllRelationIds().getMany();
   }
 }
