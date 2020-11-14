@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Crud } from '@nestjsx/crud';
 import {
@@ -20,8 +20,8 @@ import { ProductService } from './product.service';
   'Update-One': ['admin'],
   'Delete-All': ['admin'],
   'Delete-One': ['admin'],
-  'Read-All': ['admin'],
-  'Read-One': ['admin'],
+  'Read-All': ['admin', 'employee', 'default'],
+  'Read-One': ['admin', 'employee', 'default'],
   'Replace-One': ['admin'],
 })
 @Crud({
@@ -48,6 +48,12 @@ import { ProductService } from './product.service';
 })
 export class ProductController {
   constructor(public readonly service: ProductService) {}
+
+  @Get('')
+  @OAuthPublic()
+  async getProducts() {
+    return this.service.getProducts();
+  }
 
   @Post('')
   async createOne(

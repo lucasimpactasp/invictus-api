@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { throws } from 'assert';
 import { CrudService } from 'src/lib/crud-services/crud-services';
@@ -8,52 +8,35 @@ import { Category } from '../category/category.entity';
 import { Product } from '../product/product.entity';
 import { Installment } from '../installment/installment.entity';
 import { User } from '../user/user.entity';
+import { ProductService } from 'src/product/product.service';
 
 @Injectable()
 export class InvoiceService extends CrudService<Invoice> {
-  constructor(@InjectRepository(Invoice) repo: Repository<Invoice>) {
+  constructor(
+    @InjectRepository(Invoice) repo: Repository<Invoice>,
+    private productService: ProductService,
+  ) {
     super(repo);
   }
 
   public async createOneInvoice(invoice: Invoice): Promise<Invoice> {
+    let errors = 0;
+
+    invoice.products.forEach(async product => {
+      await this.productService.updateProd(product.id).catch(error => {
+        errors += 1;
+        throw error;
+      });
+    });
+
+    if (errors > 0) {
+      throw new BadRequestException('Não há este produto em estoque');
+    }
+
     return await this.repo.save(invoice);
   }
 
-  public async updateInvoice(id: string, invoice: Invoice): Promise<Invoice> {
-    const newInvoice: Invoice = {
-      ...invoice,
-    };
-
-    delete newInvoice.products;
-
-    newInvoice.total = invoice.installments.reduce(
-      (acc, value) => acc + value.price,
-      0,
-    );
-
-    newInvoice.products = invoice.products.map((product) => {
-      return { id: product as unknown as string } as Product;
-    });
-
-    newInvoice.installments.map((installment) => {
-      delete installment.invoice;
-    });
-
-    if (newInvoice.products.length === 0) {
-      newInvoice.products = null;
-    }
-
-    if (newInvoice.installments.length === 0) {
-      newInvoice.products = null;
-    }
-
-    console.log(newInvoice);
-
-    await this.repo.save({ ...newInvoice, id });
-    return newInvoice;
-  }
-
-  public async search(body: { from: Date, until: Date }) {
+  public async search(body: { from: Date; until: Date }) {
     return await this.repo.find({
       created_at: Between(body.from, body.until),
     });

@@ -16,8 +16,8 @@ import { ProductService } from '../product/product.service';
   'Update-One': ['admin'],
   'Delete-All': ['admin'],
   'Delete-One': ['admin'],
-  'Read-All': ['admin'],
-  'Read-One': ['admin'],
+  'Read-All': ['admin', 'employee', 'default'],
+  'Read-One': ['admin', 'employee', 'default'],
   'Replace-One': ['admin'],
 })
 @Crud({

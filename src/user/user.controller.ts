@@ -17,7 +17,6 @@ import {
 import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
 import { SanitizePipe } from '../lib/pipes/sanitize.pipe';
 import { UserDto } from './user.dto';
-import { Product } from '../product/product.entity';
 
 @ApiTags('Users')
 @Controller('users')
@@ -28,8 +27,8 @@ import { Product } from '../product/product.entity';
   'Update-One': ['admin'],
   'Delete-All': ['admin'],
   'Delete-One': ['admin'],
-  'Read-All': ['admin'],
-  'Read-One': ['admin'],
+  'Read-All': ['admin', 'employee', 'default'],
+  'Read-One': ['admin', 'employee', 'default'],
   'Replace-One': ['admin'],
 })
 @Crud({

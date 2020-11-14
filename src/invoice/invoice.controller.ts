@@ -73,15 +73,7 @@ export class InvoiceController {
 
     return await this.service.createOneInvoice(body);
   }
-
-  @Put(':id')
-  async putOne(
-    @Param('id') id: string,
-    @Body() invoice: Invoice,
-  ): Promise<Invoice> {
-    return await this.service.updateInvoice(id, invoice);
-  }
-
+  
   @Get(':id')
   public async getInvoice(@Param('id') id: string): Promise<Invoice> {
     return await this.service.getInvoice(id);

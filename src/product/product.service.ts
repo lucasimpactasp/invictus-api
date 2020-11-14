@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CrudService } from 'src/lib/crud-services/crud-services';
 import { User } from 'src/user/user.entity';
@@ -10,6 +10,12 @@ import { Product } from './product.entity';
 export class ProductService extends CrudService<Product> {
   constructor(@InjectRepository(Product) repo: Repository<Product>) {
     super(repo);
+  }
+
+  public async getProducts() {
+    return await this.repo.find({
+      relations: ['category', 'vendor']
+    });
   }
 
   public async createOneProduct(
@@ -36,10 +42,7 @@ export class ProductService extends CrudService<Product> {
     return await this.repo.save((newProduct as unknown) as Product);
   }
 
-  public async putOneProduct(
-    id: string,
-    product: Product,
-  ): Promise<Product> {
+  public async putOneProduct(id: string, product: Product): Promise<Product> {
     const newProduct: any = {
       ...product,
     };
@@ -55,9 +58,19 @@ export class ProductService extends CrudService<Product> {
     return newProduct;
   }
 
-  public async searchProduct(body: {term: string}): Promise<Product[]> {
+  public async searchProduct(body: { term: string }): Promise<Product[]> {
     return await this.repo.find({
-      name: Like(`%${body.term}%`)
-    })
+      name: Like(`%${body.term}%`),
+    });
+  }
+
+  public async updateProd(id: string): Promise<Product> {
+    const product: Product = await this.repo.findOne(id);
+
+    if (product.quantity === 0) {
+      throw new BadRequestException('Não há este produto em estoque');
+    }
+
+    return await this.repo.save({ ...product, quantity: product.quantity - 1 });
   }
 }
