@@ -14,7 +14,7 @@ export class ProductService extends CrudService<Product> {
 
   public async getProducts() {
     return await this.repo.find({
-      relations: ['category', 'vendor']
+      relations: ['category', 'vendor'],
     });
   }
 
@@ -64,13 +64,22 @@ export class ProductService extends CrudService<Product> {
     });
   }
 
-  public async updateProd(id: string): Promise<Product> {
+  public async updateProd(id: string, quantity: number): Promise<Product> {
     const product: Product = await this.repo.findOne(id);
 
     if (product.quantity === 0) {
       throw new BadRequestException('Não há este produto em estoque');
     }
 
-    return await this.repo.save({ ...product, quantity: product.quantity - 1 });
+    if (product.quantity - quantity < 0) {
+      throw new BadRequestException(
+        'Não há quantia suficiente deste produto em estoque',
+      );
+    }
+    
+    return await this.repo.save({
+      ...product,
+      quantity: product.quantity - quantity,
+    });
   }
 }

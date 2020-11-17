@@ -53,18 +53,18 @@ export class InvoiceController {
   }
 
   @Post('')
-  async createOne(@Body() body: Invoice, @CurrentUser() user: User) {
+  async createOne(@Body() body: any, @CurrentUser() user: User) {
     body.total = body.installments.reduce(
-      (acc, value) => acc + value.price,
+      (acc: any, value: any) => acc + value.price,
       0,
     );
     body.seller = { id: user.id } as User;
 
-    body.products = body.products.map((product) => {
+    body.products = body.products.map((product: any) => {
       return { id: product as unknown as string } as Product;
     });
 
-    body.installments.forEach((installment) => {
+    body.installments.forEach((installment: any) => {
       delete installment.invoice;
       delete installment.paymentMethod;
       delete installment.paymentStatus;
