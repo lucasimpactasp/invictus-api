@@ -15,12 +15,23 @@ export class InvoiceService extends CrudService<Invoice> {
   }
 
   public async createOneInvoice(invoice: any): Promise<Invoice> {
+    const quantities: any = invoice.quantities;
+
+    console.log(quantities);
+
     for (let product of invoice.products) {
-      await this.productService
-        .updateProd(product.id, invoice.quantity)
-        .catch(error => {
-          throw new BadRequestException(error);
-        });
+      if (quantities && quantities.hasOwnProperty(product.id)) {
+        await this.productService
+          .updateProd(product.id, quantities[product.id])
+          .catch(error => {
+            throw new BadRequestException(error);
+          });
+      } else {
+        throw new BadRequestException(
+          'Não foi possível verificar a quantidade disponível do produto ' +
+            (await this.productService.getOneProduct(product.id)).name,
+        );
+      }
     }
 
     return await this.repo.save(invoice);
@@ -34,7 +45,8 @@ export class InvoiceService extends CrudService<Invoice> {
 
   public async searchInvoices(body: { title: string }): Promise<Invoice[]> {
     return await this.repo.find({
-      title: Like(`%${body.title}%`),
+      relations: ['installments', 'products', 'seller', 'buyer'],
+      where: `Invoice.title ILIKE '%${body.title}%'`,
     });
   }
 

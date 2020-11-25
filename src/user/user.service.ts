@@ -90,9 +90,9 @@ export class UserService extends CrudService<User> {
   }
 
   public async searchUsers(body: { username: string }): Promise<User[]> {
-    return await this.repo
-      .createQueryBuilder('user')
-      .where('user.username LIKE :username', { username: `%${body.username}%`})
-      .loadAllRelationIds().getMany();
+    return await this.repo.find({
+      relations: ['madeInvoices', 'products'],
+      where: `User.username ILIKE '%${body.username}%'`,
+    });
   }
 }
